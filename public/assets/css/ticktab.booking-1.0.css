@@ -1,0 +1,87 @@
+/***********************************************
+Ticktab
+URL: https://www.ticktab.com
+AUTHOR: Nabil Amer Thabit (nbilz//lab//dsign | @nbilz)
+EMAIL: nbilz@live.com
+CREATE DATE: Sep 7, 2014
+UPDATE DATE: Sep 7, 2014
+REVISION: 1
+NAME: ticktab.booking-1.0.css
+TYPE: Cascading Style Sheet
+DESCRIPTION: Ticktab Booking Gateway
+************************************************/
+
+.title-booking{
+    font-family: Lucida Grande, Arial, Helvetica, sans-serif;
+    padding: 0 0 15px 0;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.check-big{
+    width: 24px;
+    height: 21px;
+    display: inline-block;
+    background: url('../img/checklist-green-big.png') right no-repeat;
+}
+
+.title-booking span{
+    color: #f77c00;
+    font-size: 16px;
+    font-weight: normal;
+}
+
+.sub-title-booking{
+    border-top: 1px dashed #CCC;
+    margin: 0 -15px;
+    padding: 15px 15px 0 15px;
+    font-size: 16px;
+    color: #f77c00;
+    font-family: Lucida Grande, Arial, Helvetica, sans-serif;
+}
+
+.transcation-summary{
+    text-transform: uppercase;
+    font-family: Lucida Grande, Arial, Helvetica, sans-serif;
+    background: #f3f5f8;
+    margin: 15px -15px 0 -15px;
+    padding: 15px;
+}
+
+.transcation-summary .title-summary{
+    font-size: 14px;
+    font-weight: bold;
+    color: #f77c00;
+}
+
+.transcation-summary ul.summary{
+    margin: 10px 0 0 30px;
+}
+
+.transcation-summary ul.summary li{
+    margin: 10px 0;
+}
+
+.transcation-summary ul.summary li:last-child{
+    margin: 10px 0 0 0;
+}
+
+.transcation-summary ul.summary li label{
+    float: left;
+    width: 150px;
+}
+
+ul.ket{
+    font-family: Lucida Grande, Arial, Helvetica, sans-serif;
+    padding: 0 0 0 20px;
+    margin: 15px 0;
+}
+
+ul.ket li{
+    list-style: disc;
+    margin: 5px 0;
+}
+
+ul.ket li a{
+    color: #2d729c;
+}

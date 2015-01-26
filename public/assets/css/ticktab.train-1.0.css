@@ -1,0 +1,253 @@
+/***********************************************
+Ticktab
+URL: https://www.ticktab.com
+AUTHOR: Nabil Amer Thabit (nbilz//lab//dsign | @nbilz)
+EMAIL: nbilz@live.com
+CREATE DATE: Sep 14, 2014
+UPDATE DATE: Sep 14, 2014
+REVISION: 1
+NAME: ticktab.train-1.0.css
+TYPE: Cascading Style Sheet
+DESCRIPTION: Ticktab Booking Gateway
+************************************************/
+
+.add-train{
+    background: url('../img/back-trains.jpg') center center no-repeat;
+    background-size: cover;
+}
+
+.form-flights-only label{
+    color: #2aa0d1;
+}
+
+.form-flights-only label span{
+    color: #ff7e0f;
+}
+
+.form-flights-only em{
+    font-size: 11px;
+    color: #ff7e15;
+    font-family: Lucida Grande, Arial, Helvetica, sans-serif;
+    margin: 0 0 0 10px;
+}
+
+.title-nempel{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+ul.airline-profile{
+    border-top: none;
+    margin: 0;
+}
+
+ul.airline-profile li:first-child{
+    padding-top: 0;
+}
+
+ul.airline-profile li{
+    color: #ff7e15;
+}
+
+ul.airline-profile li span{
+    color: #0f3f61;
+}
+
+.about-train{
+    margin: 0 5px -5px 5px;
+    font-family: Lucida Grande, Arial, Helvetica, sans-serif;
+    line-height: 18px;
+}
+
+.about-train p{
+    margin: 10px 0;
+}
+
+ul.train-list{
+    font-family: Lucida Grande, Arial, Helvetica, sans-serif;
+    margin: -5px 0;
+}
+
+ul.train-list li{
+    border-bottom: 1px solid #dfdfdf;
+}
+
+ul.train-list li:last-child{
+    border-bottom: none;
+}
+
+ul.train-list li a{
+    display: block;
+    text-align: center;
+    text-decoration: none;
+    color: #ff7e15;
+    margin: 5px 0;
+    padding: 5px 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 11px;
+}
+
+ul.train-list li a span{
+    font-weight: bold;
+    font-size: 12px;
+    color: #0f3f61;
+}
+
+ul.train-sche{
+    margin: 0 -10px -10px -10px;
+    font-family: Lucida Grande, Arial, Helvetica, sans-serif;
+    text-align: center;
+}
+
+ul.train-sche li{
+    border-bottom: 1px solid #dfdfdf;
+    padding: 0 10px;
+}
+
+ul.train-sche li:last-child{
+    border-bottom: none;
+}
+
+ul.train-sche li a{
+    display: block;
+    padding: 20px 0;
+    text-decoration: none;
+    color: #0f3f61;
+    font-size: 11px;
+    line-height: 16px;
+    background: url('../img/sh-inner-reg.png') center bottom no-repeat;
+}
+
+ul.train-sche li a strong{
+    font-size: 12px;
+}
+
+ul.train-sche li a .bungkus-img{
+    border: 5px solid #FFF;
+    border-radius: 5px;
+    box-shadow: 0 0 2px rgba(0, 0, 0, .4);
+}
+
+ul.train-sche li a .bungkus-img img{
+    width: 100%;
+}
+
+ul.train-sche li a .dest{
+    margin: 0 0 15px 0;
+    font-size: 14px;
+    padding: 5px 0 15px 0;
+    border-bottom: 1px solid #e3ecf1;
+}
+
+ul.train-sche li a .dest span.icon-train{
+    width: 24px;
+    height: 15px;
+    display: inline-block;
+    margin: 0 10px -1px 10px;
+    background: url(../img/icon-train.png) no-repeat;
+}
+
+ul.train-sche li a .train-date{
+    border-left: 1px dashed #e3ecf1;
+    border-right: 1px dashed #e3ecf1;
+    height: 55px;
+    padding-top: 5px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+ul.train-sche li a .train-time{
+    border-right: 1px dashed #e3ecf1;
+    height: 55px;
+    padding-top: 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+ul.train-sche li a .train-price{
+    border-right: 1px dashed #e3ecf1;
+    height: 55px;
+    text-align: right;
+    line-height: 55px;
+    font-size: 14px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+ul.train-sche li a .train-price span{
+    color: #ff7e15;
+    font-weight: bold;
+}
+
+@media screen and (min-width: 768px) and (max-width: 1024px){
+    br.bran{
+        display: none;
+    }
+}
+
+@media screen and (min-width: 768px) and (max-width: 1024px) and (orientation: landscape){}
+
+@media screen and (min-width: 768px) and (max-width: 1024px) and (orientation: portrait){
+    ul.train-sche li a .bungkus-img{
+        margin: 6px 0 0 0;
+    }
+    
+    ul.train-sche li a .dest{
+        margin: 0 0 10px 0;
+        padding: 0 0 10px 0;
+    }
+}
+
+@media screen and (max-width: 767px){
+    br.bran{
+        display: none;
+    }
+}
+
+@media screen and (max-width: 767px){
+    ul.train-sche li{
+        margin: 0;
+        padding: 0;
+    }
+    
+    ul.train-sche li a .dest{
+        margin: 10px 0 15px 0;
+    }
+
+    ul.train-sche li a .train-date{
+        border-left: none;
+        border-right: none;
+        margin: 0;
+        padding: 0 0 10px 0;
+        height: auto;
+        border-bottom: 1px dashed #e3ecf1;
+    }
+
+    ul.train-sche li a .train-time{
+        border-right: none;
+        border-bottom: 1px dashed #e3ecf1;
+        margin: 0;
+        padding: 10px 0;
+        height: auto;
+    }
+
+    ul.train-sche li a .train-price{
+        border-right: none;
+        text-align: center;
+        margin: 0;
+        padding: 10px 0 0 0;
+        height: auto;
+        font-size: 18px;
+        line-height: 20px;
+    }
+}
+
+@media screen and (max-width: 767px) and (orientation: landscape){}
+
+@media screen and (max-width: 767px) and (orientation: portrait){}
