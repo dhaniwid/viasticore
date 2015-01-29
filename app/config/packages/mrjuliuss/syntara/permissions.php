@@ -71,4 +71,11 @@ return array(
         'putRoomAvailability' => 'rooms-management',
         'setRoomAvailability' => 'rooms-management',
         'table-availability' => 'rooms-management',
+    
+        'listRoomSurcharge' => 'rooms-management',
+        'newRoomSurcharge' => 'rooms-management',
+        'newRoomSurchargePost' => 'rooms-management',
+        'deleteRoomSurcharge' => 'rooms-management',
+        'editRoomSurcharge' => 'rooms-management',
+        'updateRoomSurchargePost'=>'rooms-management',
 );

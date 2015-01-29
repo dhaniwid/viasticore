@@ -8,6 +8,6 @@ class Surcharge extends Eloquent
      */
 	protected $table = 'surcharge';
 	protected $primaryKey = 'surcharge_id';
-        
-        public $timestamps = false;
+        protected $fillable = array('surcharge_id','surcharge_description');
+        public $timestamps = false;      
 }
