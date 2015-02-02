@@ -1,5 +1,6 @@
 <?php
 
+
 class RoomPriceController extends \BaseController {
 
 	/**
@@ -13,14 +14,18 @@ class RoomPriceController extends \BaseController {
             $roomprices = DB::select(RoomPrice::getQueryRoomPrice());
             $roompricedate = DB::select(RoomPrice::getQueryRoomPriceDate());
             $this->getRoomPriceDate($roomprices, $roompricedate);
-            
+            $roomTypes = RoomType::lists('roomtype_name', 'roomtype_id');        
             if(Request::ajax())
             {
-                $html = View::make('roomprices.list-roomprices')->with('roomprices', $roomprices)->render();
+                $html = View::make('roomprices.list-roomprices')->with('roomprices', $roomprices)
+                        ->with('roomtypes',$roomTypes)->render();
                 return Response::json(array('html' => $html));
             }
             
-            $this->layout = View::make('roomprices.index-roomprice')->with('roomprices', $roomprices)->with('roompricedate', $roompricedate);
+            $this->layout = View::make('roomprices.index-roomprice')
+                    ->with('roomtypes',$roomTypes)->with('roomtype_id','')
+                    ->with('start_date',null)->with('end_date',null)
+                    ->with('roomprices', $roomprices)->with('roompricedate', $roompricedate);
             $this->layout->title = trans('syntara::roomprices.list');
             $this->layout->breadcrumb = Config::get('syntara::breadcrumbs.roomprices');
 	}
@@ -42,6 +47,181 @@ class RoomPriceController extends \BaseController {
             }
             return $roomprices;
         }
+        
+        /*public function update(){
+            $test = Input::get('Single');
+            print_r($test);
+        }*/
+        
+        /**
+         * 
+         */
+        public function search(){
+            $rules = array(
+                'start_date' => array('required', 'date_format:"d-m-Y"', 'before:end_date'),
+                'end_date' => array('required', 'date_format:"d-m-Y"', 'after:start_date'),
+                'roomtype_id' => array('required')
+            );
+            $messages = array(
+                'start_date.required' => 'Please select Start Date',
+                'end_date.required' => 'Please select End Date',
+                'required' => 'The  :attribute is required.',
+            );
+            $validator = Validator::make(Input::all(), $rules, $messages);
+            if ($validator->fails()) {
+                return Response::json(array('roomPriceCreated' => false, 'errorMessages' => $validator->messages()));
+            }
+            
+            $roomtypes = RoomType::lists('roomtype_name', 'roomtype_id');
+            $occ_master = Occupancy::orderBy('occupancy_id')->get();
+            $roomtype_id = Input::get('roomtype_id');
+            $param_price_from = Input::get('start_date');
+            $param_price_to = Input::get('end_date');            
+            $price_from = date("Y-m-d", strtotime($param_price_from));
+            $price_to = date("Y-m-d", strtotime($param_price_to));
+            
+            //ambil room type, cek berapa occupancies
+            $room_occ = 0;
+            $room_types = RoomType::where('roomtype_id','=',$roomtype_id)->get();
+            foreach($room_types as $room){
+                $room_occ = $room->roomtype_maxoccupancy;
+            }
+            
+            //buat blank obj buat tanggal yg kosong
+            $blankRoomPriceObj = new stdClass();
+            $blankRoomPriceObj->roomprice_rate = 0;
+            $blankRoomPriceObj->roomprice_breakfast = 0;                    
+            $blankRoomPriceObj->roomprice_extrabed = 0;
+            $blankRoomPriceObj->roomprice_status = '';
+            $blankRoomPriceObj->roomprice_day = '';
+
+            $priceList = array();
+            for ($x = 0; $x < $room_occ; $x++) {
+                $occupancy_id = $x+1;
+                $roomprice = RoomPrice::where('roomtype_id', '=', $roomtype_id)
+                            ->where('roomprice_date', '>=', $price_from)
+                            ->where('roomprice_date', '<=', $price_to)
+                            ->where('occupancy_id', '=', $occupancy_id)
+                            ->orderBy('roomprice_date')->get();
+                
+                //bikin map, keynya date buat mapping ke 
+                //range tanggal dari user
+                $array_rp = array();
+                foreach($roomprice as $rp){
+                    $roomPriceObj = new stdClass();
+                    $roomPriceObj->roomprice_rate = $rp->roomprice_rate;
+                    $roomPriceObj->roomprice_breakfast = 
+                            empty($rp->roomprice_breakfast)?0:$rp->roomprice_breakfast;
+                    $roomPriceObj->roomprice_extrabed = $rp->roomprice_extrabed;
+                    $roomPriceObj->roomprice_date = $rp->roomprice_date;
+                    $roomPriceObj->roomprice_status = $rp->roomprice_status;
+                    $array_rp[$rp->roomprice_date] = $roomPriceObj;
+                }
+                
+                //ditampilkan perhari, jika ada yang null (price belum tersedia)
+                //ditampilkan nol
+                //bikin array perhari dari range yang dikasih ketika search biar 
+                //di view tinggal nampil
+                $endDate = new DateTime($param_price_to);
+                $endDate = $endDate->modify( '+1 day' );
+                $period = new DatePeriod(new DateTime($param_price_from), 
+                        new DateInterval('P1D'), $endDate);
+                foreach($period as $day){
+                    $priceList[$day->format("Y-m-d")][$occupancy_id] = 
+                            empty($array_rp[$day->format("Y-m-d")])?$blankRoomPriceObj:$array_rp[$day->format("Y-m-d")];
+                }
+                
+            }           
+            
+            //tampilan
+            $occText = array();
+            foreach($occ_master as $occ){
+                array_push($occText,$occ->occupancy_description);
+            }
+            $this->layout = View::make('roomprices.index-roomprice', array('pricelist' => $priceList, 
+                'roomtypes' => $roomtypes,'roomtype_id'=>$roomtype_id,
+                'start_date'=>$param_price_from,'end_date'=>$param_price_to,
+                'room_occ'=>$room_occ,'occText'=>$occText,'listView'=>1));            
+            $this->layout->title = trans('syntara::roomprices.edit');
+            $this->layout->breadcrumb = Config::get('syntara::breadcrumbs.edit_room_price');
+        }
+        
+        public function edit(){
+            $rules = array(
+                'start_date' => array('required', 'date_format:"d-m-Y"', 'before:end_date'),
+                'end_date' => array('required', 'date_format:"d-m-Y"', 'after:start_date'),
+                'roomtype_id' => array('required')
+            );
+            $messages = array(
+                'start_date.required' => 'Please select Start Date',
+                'end_date.required' => 'Please select End Date',
+                'required' => 'The  :attribute is required.',
+            );
+            $validator = Validator::make(Input::all(), $rules, $messages);
+            if ($validator->fails()) {
+                return Response::json(array('roomPriceCreated' => false, 'errorMessages' => $validator->messages()));
+            }
+
+
+            $startDate = new DateTime(Input::get('start_date'));
+            $endDate = new DateTime(Input::get('end_date'));
+            $roomtype_id = Input::get('roomtype_id');
+            
+            $roomtypes = RoomType::where('roomtype_id', '=',$roomtype_id)->get();
+            $room_occ = 0;
+            foreach($roomtypes as $room){
+                $room_occ = $room->roomtype_maxoccupancy;
+            }
+            $occText = array();
+            $occ_master = Occupancy::orderBy('occupancy_id')->get();
+            for($counter=0;$counter<$room_occ;$counter++){
+                array_push($occText,$occ_master[$counter]->occupancy_description);
+            }
+            $now = new DateTime();
+            /*$test = Input::get('Double');
+            print_r($test);*/
+            DB::beginTransaction();
+            try{
+                for($counter=0;$counter<$room_occ;$counter++){
+                    //delete semua dulu, baru insert
+                    RoomPrice::where('roomprice_date', '>=', $startDate)->
+                            where('roomtype_id', '=', $roomtype_id)->
+                            where('roomprice_date', '<=', $endDate)->
+                            where('occupancy_id','=',($counter+1))->
+                            delete();
+                    
+                    $edit_data = Input::get($occ_master[$counter]->occupancy_description);
+                    foreach($edit_data as $key=>$data){
+                        /*print_r($data);
+                        echo " key ".$key." ".$occ_master[$counter]->occupancy_description."<BR>";*/
+                        $roomPrice = new RoomPrice();
+                        $roomPrice->roomprice_datetime = $now;           
+                        $roomPrice->roomprice_date = $key; 
+                        $roomPrice->roomprice_day = '';
+                        $roomPrice->occupancy_id = $counter+1;
+                        $roomPrice->roomtype_id = $roomtype_id;
+                        $roomPrice->roomprice_rate = $data['rate'];
+                        $roomPrice->roomprice_breakfast = $data['breakfast'];
+                        $roomPrice->roomprice_extrabed = empty($data['extrabed'])?0:$data['extrabed'];
+                        $roomPrice->roomprice_status = empty($data['status'])?null:$data['status'];
+                        $roomPrice->save();
+                    }
+                    
+                }
+                
+            } catch (Exception $ex) {
+                DB::rollback();
+                $msg = $ex->getMessage();
+                return json_encode(array('roomPriceUpdated' => false, 
+                    'message' => $msg, 'messageType' => 'danger', 
+                    'redirectUrl' => URL::route('listRoomPrices')));
+            }
+            DB::commit();
+            return json_encode(array('roomPriceUpdated' => true, 
+                'message' => trans('syntara::roomprices.messages.update-success'), 
+                'messageType' => 'success','redirectUrl' => URL::route('listRoomPrices')));
+        }
+
 
 	/**
 	 * Show the form for creating a new resource.
@@ -79,7 +259,7 @@ class RoomPriceController extends \BaseController {
 	 * @return Response
 	 */
 	public function store($occupancies)
-	{
+	{            
             try {
                 $rules = array(
                     'start_date' => array('required', 'date_format:"d-m-Y"', 'before:end_date'),
@@ -90,19 +270,21 @@ class RoomPriceController extends \BaseController {
                     'days.required' => 'Please select at least one day',
                     'start_date.required' => 'Please select Start Date',
                     'end_date.required' => 'Please select End Date',
-                    'required' => 'The room rate for :attribute occupancy is required.',
+                    'required' => 'The room rate for :attribute occupancy is required.',                    
                 );
                 
                 //retrieve occupancy
                 $roomtype = RoomType::find(Input::get('roomtype_name'));
+                $messages['min'] = 'The :attribute quintuple must be at least '.number_format($roomtype->roomtype_lowestprice);
                 $roomtype_occupancy = $roomtype->roomtype_maxoccupancy;
                 $occupancies = Occupancy::orderBy('occupancy_id', 'asc')->paginate($roomtype_occupancy);
+                                
                 //validate occupancy description manually
                 foreach($occupancies as $occupancy){
                     $field_name = ($occupancy->occupancy_description);
-                    $rules[$field_name] = array('required');
+                    $rules[$field_name] = array('required','integer','min:'.$roomtype->roomtype_lowestprice);
                 }
-
+;
                 $validator = Validator::make(Input::all(), $rules, $messages);
                 if ($validator->fails()) {
                     return Response::json(array('roomPriceCreated' => false, 'errorMessages' => $validator->messages()));
@@ -129,7 +311,7 @@ class RoomPriceController extends \BaseController {
                              if($date->format("D") == $day){
                                 $roomPrice = new RoomPrice();
                                 $roomPrice->roomprice_datetime = $now;           
-                                $roomPrice->roomprice_date = $date->format("d-m-Y"); 
+                                $roomPrice->roomprice_date = $date->format("Y-m-d"); 
                                 $roomPrice->roomprice_day = $date->format("D");
                                 $roomPrice->occupancy_id = $occupancy->occupancy_id;
                                 $roomPrice->roomtype_id = Input::get('roomtype_name');
@@ -148,7 +330,7 @@ class RoomPriceController extends \BaseController {
                          if($date->format("D") == $day){
                             $roomAvailability = new RoomAvailability();
                             $roomAvailability->roomavailability_id = $now;
-                            $roomAvailability->roomavailability_date = $date->format("d-m-Y"); 
+                            $roomAvailability->roomavailability_date = $date->format("Y-m-d"); 
                             $roomAvailability->roomtype_id = Input::get('roomtype_name');
                             $roomAvailability->roomavailability_number = Input::get('allotment');
                             $roomAvailability->roomavailability_minstay = Input::get('minstay');
@@ -178,7 +360,7 @@ class RoomPriceController extends \BaseController {
             $this->layout->title = trans('syntara::roomprices.types.detail');
             $this->layout->breadcrumb = Config::get('syntara::breadcrumbs.occupancy_detail');
 	}
-
+        
 	/**
 	 * Update the specified resource in storage.
 	 *

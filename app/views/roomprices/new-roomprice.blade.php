@@ -65,7 +65,6 @@
                                 }
                             </script>
                             <div id="table-rate" style='display: none'>
-
                             </div>
                             <div class="form-group">
                                 <label>{{ trans('syntara::roomprices.allotment') }}</label>&nbsp;&nbsp;

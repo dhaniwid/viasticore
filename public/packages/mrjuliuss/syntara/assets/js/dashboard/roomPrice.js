@@ -2,15 +2,16 @@ $(function()
 {
     $(document).on('submit', '#create-room-price-form', function()
     {
-        console.log(window.location.href.toString());
+        console.log(window.location.href.toString()+"/"+$('input[name=occupancy_id]').val());
         var sArray = $(this).serializeArray();
         $.ajax({
             type: "POST",
-            url: window.location.href.toString()+"/"+$(this).data('occupancies'),
+            url: window.location.href.toString()+"/"+$('input[name=occupancy_id]').val(),
             data: sArray,
             dataType: "json"
         }).done(function(result)
         {
+            console.log("test");
             if(result.roomPriceCreated === false)
             {
                 if(typeof result.message !== 'undefined')
@@ -29,6 +30,28 @@ $(function()
                 window.location = result.redirectUrl;
             }
         });
+        return false;
+    }).on('submit','#update-room-price-form',function(){
+        console.log('inside edit-room-price-form');
+        $form = $(this);
+        var sArray = $(this).serializeArray();
+        $.ajax({
+            "type": "POST",
+            "url": $form.attr('action'),
+            "data": sArray,
+            "dataType": "json"
+        }).done(function(result)
+        {
+            if(typeof result.message !== 'undefined')
+            {
+                showStatusMessage(result.message, result.messageType);
+            }
+            else if(typeof result.errorMessages !== 'undefined')
+            {
+                showRegisterFormAjaxErrors(result.errorMessages);
+            }
+        });
+
         return false;
     }).on('submit', '#edit-room-price-form', function()
     {
@@ -66,6 +89,28 @@ $(function()
     }).on('click', '#delete-item', function()
     {
         $('#confirm-modal').modal();
+    }).on('click','#search-room-price-form',function(){
+        console.log('inside search-room-price-form');
+        $form = $(this);
+        var sArray = $(this).serializeArray();
+        $.ajax({
+            "type": "POST",
+            "url": $form.attr('action'),
+            "data": sArray,
+            "dataType": "json"
+        }).done(function(result)
+        {
+            if(typeof result.message !== 'undefined')
+            {
+                showStatusMessage(result.message, result.messageType);
+            }
+            else if(typeof result.errorMessages !== 'undefined')
+            {
+                showRegisterFormAjaxErrors(result.errorMessages);
+            }
+        });
+
+        return false;
     }).on('click', '.delete-room-price .confirm-action', function()
     {
         $.each($('.table tbody tr td input:checkbox:checked'), function( key, value ) 

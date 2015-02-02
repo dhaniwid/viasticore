@@ -11,6 +11,9 @@ class RoomPrice extends Illuminate\Database\Eloquent\Model
         
         public $timestamps = false;
         
+        protected $fillable = array('roomprice_datetime', 'roomprice_date', 'occupancy_id', 'roomtype_id',
+            'roomprice_rate', 'roomprice_breakfast', 'roomprice_extrabed', 'roomprice_status', 'roomprice_day');
+        
         public static function getQueryRoomPrice()
         {
             return 'SELECT

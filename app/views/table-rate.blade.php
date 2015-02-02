@@ -5,8 +5,8 @@
         <?php $index++ ?>
         <div class="form-group">
             <label>{{$occupancy->occupancy_description}}</label><br>
-            <input name='{{$occupancy->occupancy_description}}' type="text" placeholder="{{$occupancy->occupancy_description}} Sell Rate">
-        </div>
+            <input class='form-control' name='{{$occupancy->occupancy_description}}' type="text" placeholder="{{$occupancy->occupancy_description}} Sell Rate">
+        </div><br>
     </ul>
     @endforeach  
     <input type='hidden' name='occupancy_id' value='{{$index}}'>    

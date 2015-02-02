@@ -62,6 +62,8 @@ return array(
         'showRoomPrice' => 'rooms-management',
         'putRoomPrice' => 'rooms-management',
         'setRoomPrice' => 'rooms-management',
+        'searchListPrice' => 'rooms-management',
+        'editListPrice' => 'rooms-management',
     
         'listRoomAvailabilities' => 'rooms-management',
         'deleteRoomAvailability' => 'rooms-management',
