@@ -2,13 +2,13 @@
 
 class RoomTypeController extends \BaseController {
 
-	/**
-	 * Display a listing of the resource.
-	 *
-	 * @return Response
-	 */
-	public function index()
-	{
+    /**
+     * Display a listing of the resource.
+     *
+     * @return Response
+     */
+    public function index()
+    {
             // get all the roomFeatures
             $roomTypes = RoomType::all();
             //$roomTypes = new RoomType();
@@ -24,31 +24,31 @@ class RoomTypeController extends \BaseController {
             $this->layout = View::make('roomtypes.index-roomtype')->with('roomtypes', $roomTypes);
             $this->layout->title = trans('syntara::rooms.features.list');
             $this->layout->breadcrumb = Config::get('syntara::breadcrumbs.roomtypes');
-	}
+    }
 
 
-	/**
-	 * Show the form for creating a new resource.
-	 *
-	 * @return Response
-	 */
-	public function create()
-	{
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return Response
+     */
+    public function create()
+    {
             $roomfeatures = RoomFeature::all();
             
             $this->layout = View::make('roomtypes.new-roomtype', array('roomfeatures' => $roomfeatures));
             $this->layout->title = trans('syntara::rooms.features.new');
             $this->layout->breadcrumb = Config::get('syntara::breadcrumbs.create_room_feature');
-	}
+    }
 
 
-	/**
-	 * Store a newly created resource in storage.
-	 *
-	 * @return Response
-	 */
-	public function store()
-	{
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @return Response
+     */
+    public function store()
+    {
             $rules = array(
                 'roomtype_name' => 'required',
                 'roomtype_maxoccupancy' => 'required',
@@ -104,17 +104,17 @@ class RoomTypeController extends \BaseController {
                     return Redirect::to('dashboard/roomTypes');
                 }
             }
-	}
+    }
 
 
-	/**
-	 * Display the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function show($id)
-	{   
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function show($id)
+    {   
             $room = RoomType::find($id);
             $roomcontents = DB::select('select f.roomfeature_id, f.roomfeature_name, c.roomtype_id, c."checked"
                                         from roomfeatures f
@@ -126,16 +126,16 @@ class RoomTypeController extends \BaseController {
             $this->layout = View::make('roomtypes.show-roomtype')->with(array('roomimages'=>$roomimages))->with(array('roomcontents' => $roomcontents))->with(array('room' => $room));
             $this->layout->title = trans('syntara::rooms.types.detail');
             $this->layout->breadcrumb = Config::get('syntara::breadcrumbs.room_type_detail');
-	}
+    }
 
-	/**
-	 * Update the specified resource in storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function update($id)
-	{
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function update($id)
+    {
             $rules = array(
                 'roomtype_name' => 'required',
                 'roomtype_maxoccupancy' => 'required',
@@ -190,17 +190,19 @@ class RoomTypeController extends \BaseController {
             {
                 return Response::json(array('roomUpdated' => false, 'message' => trans('syntara::rooms.messages.update-fail'), 'messageType' => 'danger'));
             }
-	}
+    }
 
-	/**
-	 * Remove the specified resource from storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function delete($id)
-	{
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function delete($id)
+    {
             try{                
+                //check several related tables
+
                 //delete room contents first
                 $roomContents = RoomContent::find($id);
                 //check whether the record exists or not
@@ -213,6 +215,13 @@ class RoomTypeController extends \BaseController {
                 if($roomImages){
                     $roomImages->delete();
                 }
+
+                //delete room availabilities first
+                RoomAvailability::where('roomtype_id', '=', $id)->delete();
+
+                //delete room availabilities first
+                RoomPrice::where('roomtype_id', '=', $id)->delete();
+
                 //finally delete the room types
                 $room = RoomType::find($id);
                 //check whether the record exists or not
@@ -222,9 +231,9 @@ class RoomTypeController extends \BaseController {
             }
             catch(Exception $e)
             {
-                return Response::json(array('deleteRoomType' => false, 'message' => trans('syntara::rooms.messages.not-found'), 'messageType' => 'danger'));
+                return Response::json(array('deleteRoomType' => false, 'message' => $e->getMessage(), 'messageType' => 'danger'));
             }
             return Response::json(array('deleteRoomType' => true, 'message' => trans('syntara::rooms.messages.remove-success'), 'messageType' => 'success'));
-	}
+    }
 
 }

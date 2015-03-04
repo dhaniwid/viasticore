@@ -38,7 +38,7 @@
                 </div>
             </section>
         </div>
-        <div class="col-lg-2">
+        {{-- <div class="col-lg-2">
             <section class="module">
                 <div class="module-head">
                     <b>{{ trans('syntara::all.search') }}</b>
@@ -57,7 +57,7 @@
                     </form>
                 </div>
             </section>
-        </div>
+        </div> --}}
     </div>
 </div>
 @stop

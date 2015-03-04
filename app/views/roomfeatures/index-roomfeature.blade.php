@@ -4,7 +4,7 @@
 <script src="{{ asset('packages/mrjuliuss/syntara/assets/js/dashboard/roomFeature.js') }}"></script>
 <div class="container" id="main-container">
     @include('syntara::layouts.dashboard.confirmation-modal', array('title' => trans('syntara::all.confirm-delete-title'), 'content' => trans('syntara::all.confirm-delete-message'), 'type' => 'delete-room-feature'))
-    <!-- will be used to show any messages -->
+    <!-- will be used to show any messages 
     @if (Session::has('message') && Session::has('type'))          
         <div class="row status-message" id='row-message'>
             <div class="col-lg-12">
@@ -26,7 +26,7 @@
                 </div>
             </div>        
         </div>
-    @endif
+    @endif-->
     <div class="row">
         <div class="col-lg-10">
             <section class="module">
@@ -39,7 +39,7 @@
                 </div>
             </section>
         </div>
-        <div class="col-lg-2">
+        {{-- <div class="col-lg-2">
             <section class="module">
                 <div class="module-head">
                     <b>{{ trans('syntara::all.search') }}</b>
@@ -58,7 +58,7 @@
                     </form>
                 </div>
             </section>
-        </div>
+        </div> --}}
     </div>
 </div>
 @stop

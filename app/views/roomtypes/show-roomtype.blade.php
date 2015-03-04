@@ -71,11 +71,11 @@
                 </div>
                 <div class="form-group">
                     <label>{{ trans('syntara::rooms.types.facilities') }}</label>
-                    <ul class="checkbox-neat">
+                    <ul class="checkbox-neat" style="list-style: none">
                         @foreach ($roomcontents as $content)
                         <li>
                         {{ Form::checkbox('room_features[]', $content->roomfeature_id, $content->checked) }}
-                        {{ $content->roomfeature_name }}
+                        {{ $content->roomfeature_name }}    
                         </li>
                         @endforeach
                     </ul>
@@ -119,9 +119,21 @@
                     <label>{{ trans('syntara::rooms.types.image') }}</label><br>
                     <th class="input-control">
                         @if(count($roomimages))
+                        <section class="gallery-slider mt100">
+                              <div class="container">
+                                <div class="row">
+                                  <div class="col-md-12">
+                                    <h2 class="lined-heading"><span>Gallery</span></h2>
+                                  </div>
+                                </div>
+                              </div>
+                              <div id="owl-gallery" class="owl-carousel">
                             @foreach ($roomimages as $image)
-                            <img src="{{$image->roomimage_description}}" id="roomimage" />
-                            @endforeach  
+                                <div class="item"><a href="{{('../../..'.$image->roomimage_description)}}" data-rel="prettyPhoto[gallery1]"><img src="{{('../../..'.$image->roomimage_description)}}" alt="Image 1"><i class="fa fa-search"></i></a></div>
+                            <!-- <img src="{{('../../..'.$image->roomimage_description)}}" id="roomimage" /> -->
+                            @endforeach 
+                            </div>
+                        </section>     
                     </th><br><br>
                             </script> 
                         @else  <br><img src="{{ asset('packages/mrjuliuss/syntara/assets/img/alert/no_preview.png')}}" id="screenshot" />

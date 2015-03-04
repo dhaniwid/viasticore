@@ -1,0 +1,5 @@
+/*Hover effects*/
+a img:hover {
+	opacity: 0%;
+	background-color: yellow; /*Returns to default state*/
+}
